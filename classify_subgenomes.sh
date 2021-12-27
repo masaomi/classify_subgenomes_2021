@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 # encoding: utf-8
-# Version = '20210907-151257'
+# Version = '20211227-110309'
 
 # required
 # * references/
@@ -19,6 +19,8 @@ sh make_homeolog_candidates_list.sh
 
 samtools index bwa_out_Ei_350_on_2Es_HS_3.2.1_genome/Eind.sort.bam
 ruby scripts/make_samtools_depth.rb references/2Es_HS_3.2.1_maker.gff Ei_350.sort.bam samtools_depth_out > samtools_depth.sh
+
+sh samtools_depth.sh
 
 ruby scripts/make_depthave_length.rb samtools_depth_out references/2Es_HS_3.2.1_transcripts.fa references/2Es_HS_3.2.1_maker.gff > gene_depth_length.dat
 # 1. max samtools_len_vs_transcript_len: 31.109929078014183

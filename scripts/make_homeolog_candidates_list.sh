@@ -9,6 +9,7 @@
 ################################################################
 
 FASTA=references/2Es_HS_3.2.1_transcripts.fa
+GFF=references/2Es_HS_3.2.1_genes.gff
 NUM_THREADS=8
 
 cat <<EOF> estimate_homeologs.rb
@@ -21,6 +22,20 @@ require 'bio'
 gene2len = Hash[*Bio::FlatFile.open("$FASTA").to_a.map{|e| [e.definition.split.first, e.seq.length]}.flatten]
 all_genes = gene2len.keys
 genes = all_genes.length
+
+genes_gff="$GFF"
+
+tid2sid = {}
+File.readlines(genes_gff).each do |line|
+  unless line =~ /^#/
+    sid, maker, type, *others = line.split
+    #if line =~ /ID=(g[ab]\d+.t\d);/
+    if type == "mRNA" and line =~ /ID=(.+?);/
+      tid = \$1
+      tid2sid[tid] = sid
+    end
+  end
+end
 
 def blast_besthits
   query = nil
@@ -71,20 +86,12 @@ obhs.each do |query, targets|
   query_length = gene2len[query]
   real_target = nil
   targets.each do |target|
-    scaff1 = if query =~ /(Super-Scaffold_\d+)/
-               \$1
-             elsif query =~ /(scaffold.+_obj)/
-               \$1
-             end
-    scaff2 = if target =~ /(Super-Scaffold_\d+)/
-               \$1
-             elsif target =~ /(scaffold.+_obj)/
-               \$1
-             end
+    scaff1 = tid2sid[query]
+    scaff2 = tid2sid[target]
     target_length = gene2len[target]
     diff_length = (query_length - target_length).abs.to_f
     ave_length = (query_length + target_length)/2.0
-    if scaff1 != scaff2 and diff_length/ave_length < 0.5
+    if scaff1 and scaff2 and scaff1 != scaff2 and diff_length/ave_length < 0.5
       real_target = target
       break
     end

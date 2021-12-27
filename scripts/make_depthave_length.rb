@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # encoding: utf-8
-# Version = '20190119-113217'
+# Version = '20211227-112302'
 
 unless depth_dir=ARGV[0] and transcripts_fa=ARGV[1] and gff=ARGV[2]
   puts "usage:"
@@ -36,7 +36,8 @@ Dir[File.join(depth_dir, "*.depth")].sort.each do |file|
   end
   ave_depth /= count.to_f
   gene_length = gene2len[gid]
-  tran_length = trans2len[gid]
+  tid = gid + ".t1"
+  tran_length = (trans2len[gid]||trans2len[tid])
   unless gene_length and tran_length
     raise gid
   end

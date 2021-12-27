@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 # encoding: utf-8
-# Version = '20211227-133746'
+# Version = '20211227-140650'
 
 # required
 # * references/
@@ -36,4 +36,7 @@ ruby scripts/scaff_ab_homeolog_count_ratio.rb references/2Es_HS_3.2.1_genome.fa 
 # scaff_ab_homeolog_count_ratio.dat generated
 
 ruby scripts/make_AB_annotation_based_on_homeolog_count_ratio.rb references/2Es_HS_3.2.1_genome.fa references/2Es_HS_3.2.1_maker.gff scaff_ab_homeolog_count_ratio.dat homeolog_list.dat --homeolog_ratio_threshold 0.6 --out_dir 2Es_classify_out_homeolog_ratio_0.6
-
+# 2Es_classify_out_homeolog_ratio_0.6/genes_new.gff generated
+# 2Es_classify_out_homeolog_ratio_0.6/genome_new.fa generated
+# homeolog_list.dat copied to 2Es_classify_out_homeolog_ratio_0.6
+# scaff_ab_homeolog_count_ratio.dat copied to 2Es_classify_out_homeolog_ratio_0.6

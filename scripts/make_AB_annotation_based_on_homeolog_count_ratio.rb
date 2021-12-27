@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # encoding: utf-8
-# Version = '20190124-052922'
+# Version = '20211227-140831'
 
 HOMEOLOG_RATIO_THREAHOLD = 0.5
 unless genome_fa=ARGV[0] and genes_gff=ARGV[1] and scaff_ab_homeolog_count_ratio_dat=ARGV[2] and homeolog_list_dat=ARGV[3]
@@ -44,6 +44,8 @@ CSV.foreach(scaff_ab_homeolog_count_ratio_dat, :headers=>true, :col_sep=>"\t") d
     sid2ab[sid] = "sn#{"%04d" % (nsid+=1)}"
   end
 end
+#p sid2ab
+#exit
 
 gff_lines = {}
 gid2ab = {}
@@ -81,6 +83,10 @@ File.readlines(genes_gff).each do |line|
     gff_lines[sid] << line.chomp
   end
 end
+#p gid2ab
+#p gff_lines
+#puts gff_lines["sa0001"].join("\n")
+#exit
 
 # new gids
 scaff_pos_gids = {}
@@ -95,6 +101,8 @@ sid2ab.sort_by{|osid, nsid| nsid}.each do |osid, nsid|
     end
   end
 end
+#p scaff_pos_gids
+#exit
 ogid2ngid = {}
 sid2ab.sort_by{|osid, nsid| nsid}.each do |osid, nsid|
   scaff_pos_gids[nsid].sort_by{|sp, gid| sp}.each do |sp, gid|
@@ -112,6 +120,8 @@ sid2ab.sort_by{|osid, nsid| nsid}.each do |osid, nsid|
     ogid2ngid[gid] = new_gid
   end
 end
+#p ogid2ngid
+#exit
 
 exon_no = -1
 new_genes_gff = File.join(out_dir, File.basename(genes_gff).gsub(/.gff/, '_new.gff'))
@@ -125,7 +135,7 @@ open(new_genes_gff, "w") do |out|
           raise unless others.first =~ /ID=/
           new_sid = nsid
           new_row = [nsid, "maker", type, sp, ep, dot1, strand, dot2]
-          gid = others.join.match(/ID=(.*?);/)[1].split(/-mRNA-1/).first
+          gid = others.join.match(/ID=(.*?);/)[1].split(/-mRNA-1/).first.split('.').first
           new_gid = ogid2ngid[gid]
           unless new_gid
             p gid
